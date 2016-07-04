@@ -1,0 +1,58 @@
+---
+- name: create project dir
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ workspace }}"
+
+- stat: path={{ selenium_project_path }}/docker-compose.yml
+  register: docker_compose_file
+
+- name: stop service
+  docker_service:
+    project_src: "{{ selenium_project_path }}"
+    state: absent
+  when: docker_compose_file.stat.exists == True
+  ignore_errors: True
+
+- name: remove compose file
+  file:
+    path: "{{ selenium_project_path }}"
+    state: absent
+  when: docker_compose_file.stat.exists == True
+
+- name: create selenium group
+  group:
+    name: "{{ selenium_group_name }}"
+    state: present
+
+- name: create selenium user
+  user:
+    name: "{{ selenium_user_name }}"
+    group: "{{ selenium_group_name }}"
+    state: present
+
+- name: create selenium dirs
+  file:
+    path: "{{ item }}"
+    owner: "{{ selenium_user_name }}"
+    group: "{{ selenium_group_name }}"
+    state: directory
+  with_items:
+    - "{{ selenium_project_path }}"
+
+- name: copy compose file
+  template:
+    src: "selenium-grid.yml"
+    dest: "{{ selenium_project_path }}/docker-compose.yml"
+    owner: "{{ selenium_user_name }}"
+    group: "{{ selenium_group_name }}"
+
+- name: start service
+  docker_service:
+    project_src: "{{ selenium_project_path }}"
+    scale:
+      hub: 1
+      chrome: "{{ selenium_chrome_nodes_count }}"
+      firefox: "{{ selenium_firefox_nodes_count }}"

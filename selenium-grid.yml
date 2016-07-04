@@ -1,0 +1,15 @@
+---
+- name: start selenium grid
+  hosts: [selenium]
+  remote_user: aeroshenko
+
+  become: true
+  become_method: sudo
+
+  vars:
+    selenium_chrome_nodes_count: 8
+    selenium_firefox_nodes_count: 0
+
+  roles:
+    - angstwad.docker_ubuntu
+    - selenium-grid
