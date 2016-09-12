@@ -1,27 +1,19 @@
 version: '2'
 
 networks:
-  private:
+  selenium-nodes:
     driver: bridge
 
 services:
-  hub:
-    image: "{{ docker_selenium_hub_image }}:{{ selenium_version }}"
-    ports:
-      - 4444:4444
-    networks:
-      - private
-
 {% if selenium_chrome_nodes_count != 0 %}
 
   chrome:
     image: "{{ docker_selenium_chrome_image }}:{{ selenium_version }}"
     networks:
-      - private
-    depends_on:
-      - hub
+      - selenium-nodes
     environment:
-      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_ADDR: {{ selenium_hub_host }}
+      HUB_PORT_4444_TCP_PORT: {{ selenium_hub_port }}
 
 {% endif %}
 {% if selenium_firefox_nodes_count != 0 %}
@@ -29,10 +21,9 @@ services:
   firefox:
     image: "{{ docker_selenium_firefox_image }}:{{ selenium_version }}"
     networks:
-      - private
-    depends_on:
-      - hub
+      - selenium-nodes
     environment:
-      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_ADDR: {{ selenium_hub_host }}
+      HUB_PORT_4444_TCP_PORT: {{ selenium_hub_port }}
 
 {% endif %}

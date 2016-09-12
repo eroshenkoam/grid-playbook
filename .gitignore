@@ -3,4 +3,4 @@
 
 # Ansible files
 *.retry
-hosts
+*.ini

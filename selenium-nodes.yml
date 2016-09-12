@@ -1,6 +1,6 @@
 ---
 - name: start selenium grid
-  hosts: [selenium]
+  hosts: [selenium-nodes]
   remote_user: aeroshenko
 
   become: true
@@ -11,5 +11,4 @@
     selenium_firefox_nodes_count: 0
 
   roles:
-    - angstwad.docker_ubuntu
-    - selenium-grid
+    - selenium-nodes

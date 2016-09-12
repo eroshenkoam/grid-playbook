@@ -1,0 +1,3 @@
+workspace: '/opt/docker/selenium-nodes'
+
+selenium_hub_port: '4444'

@@ -6,53 +6,52 @@
   with_items:
     - "{{ workspace }}"
 
-- stat: path={{ selenium_project_path }}/docker-compose.yml
+- stat: path={{ workspace }}/docker-compose.yml
   register: docker_compose_file
 
 - name: stop service
   docker_service:
-    project_src: "{{ selenium_project_path }}"
+    project_src: "{{ workspace }}"
     state: absent
   when: docker_compose_file.stat.exists == True
   ignore_errors: True
 
 - name: remove compose file
   file:
-    path: "{{ selenium_project_path }}"
+    path: "{{ workspace }}"
     state: absent
   when: docker_compose_file.stat.exists == True
 
-- name: create selenium group
+- name: create group
   group:
-    name: "{{ selenium_group_name }}"
+    name: "{{ group_name }}"
     state: present
 
-- name: create selenium user
+- name: create user
   user:
-    name: "{{ selenium_user_name }}"
-    group: "{{ selenium_group_name }}"
+    name: "{{ user_name }}"
+    group: "{{ group_name }}"
     state: present
 
-- name: create selenium dirs
+- name: create workspace
   file:
     path: "{{ item }}"
-    owner: "{{ selenium_user_name }}"
-    group: "{{ selenium_group_name }}"
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
     state: directory
   with_items:
-    - "{{ selenium_project_path }}"
+    - "{{ workspace }}"
 
 - name: copy compose file
   template:
-    src: "selenium-grid.yml"
-    dest: "{{ selenium_project_path }}/docker-compose.yml"
-    owner: "{{ selenium_user_name }}"
-    group: "{{ selenium_group_name }}"
+    src: "docker-compose.yml"
+    dest: "{{ workspace }}/docker-compose.yml"
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
 
 - name: start service
   docker_service:
-    project_src: "{{ selenium_project_path }}"
+    project_src: "{{ workspace }}"
     scale:
-      hub: 1
       chrome: "{{ selenium_chrome_nodes_count }}"
       firefox: "{{ selenium_firefox_nodes_count }}"
