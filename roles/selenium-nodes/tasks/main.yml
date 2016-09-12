@@ -52,6 +52,3 @@
 - name: start service
   docker_service:
     project_src: "{{ workspace }}"
-    scale:
-      chrome: "{{ selenium_chrome_nodes_count }}"
-      firefox: "{{ selenium_firefox_nodes_count }}"
