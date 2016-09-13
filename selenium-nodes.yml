@@ -1,7 +1,6 @@
 ---
 - name: start selenium grid
   hosts: [selenium-nodes]
-  remote_user: aeroshenko
 
   become: true
   become_method: sudo
@@ -9,6 +8,11 @@
   vars:
     selenium_chrome_nodes_count: 8
     selenium_firefox_nodes_count: 0
+
+  vars_prompt:
+    - name: "selenium_hub_host"
+      prompt: "where is selenium hub?"
+      private: no
 
   roles:
     - selenium-nodes

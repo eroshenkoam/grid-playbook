@@ -9,7 +9,7 @@
 - stat: path={{ workspace }}/docker-compose.yml
   register: docker_compose_file
 
-- name: stop service
+- name: stop compose
   docker_service:
     project_src: "{{ workspace }}"
     state: absent
@@ -21,6 +21,11 @@
     path: "{{ workspace }}"
     state: absent
   when: docker_compose_file.stat.exists == True
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
 
 - name: create group
   group:
@@ -42,13 +47,13 @@
   with_items:
     - "{{ workspace }}"
 
-- name: copy compose file
+- name: create compose file
   template:
     src: "docker-compose.yml"
     dest: "{{ workspace }}/docker-compose.yml"
     owner: "{{ user_name }}"
     group: "{{ group_name }}"
 
-- name: start service
+- name: start compose
   docker_service:
     project_src: "{{ workspace }}"

@@ -2,8 +2,8 @@
 
 ## Setup selenium hub
 
-`ansible-playbook -i hosts.ini --ask-sudo-pass selenium-hub.yml`
+`ansible-playbook -i hosts.ini selenium-hub.yml --ask-sudo-pass`
 
 ## Setup selenium nodes
 
-`ansible-playbook -i hosts.ini -e selenium_hub_host=<selenium hub host here> --ask-sudo-pass selenium-hub.yml`
+`ansible-playbook -i hosts.ini selenium-nodes.yml --ask-sudo-pass`

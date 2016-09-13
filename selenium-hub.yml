@@ -1,7 +1,6 @@
 ---
 - name: start selenium grid
   hosts: [selenium-hub]
-  remote_user: aeroshenko
 
   become: true
   become_method: sudo
