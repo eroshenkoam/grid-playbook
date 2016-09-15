@@ -1,9 +1,9 @@
 ---
-- name: start selenium grid
-  hosts: [selenium-hub]
+- name: selenium hub
+  hosts: [hub]
 
   become: true
   become_method: sudo
 
   roles:
-    - selenium-hub
+    - { role: 'docker-compose', workspace: '/opt/docker/selenium-hub', docker_compose_template: 'hub.yml' }

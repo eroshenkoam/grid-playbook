@@ -1,0 +1,33 @@
+version: '2'
+
+networks:
+  selenium-nodes:
+    driver: bridge
+
+services:
+{% for i in range(selenium_chrome_nodes_count) %}
+  chrome_{{ i }}:
+    image: "{{ docker_selenium_chrome_image }}:{{ selenium_version }}"
+    networks:
+      - selenium-nodes
+    ports:
+      - "555{{ i }}:555{{ i }}"
+    environment:
+      HUB_PORT_4444_TCP_ADDR: {{ selenium_hub_host }}
+      HUB_PORT_4444_TCP_PORT: {{ selenium_hub_port }}
+      SE_OPTS: "-host {{ ansible_host }} -port 555{{ i }}"
+{% endfor %}
+
+{% for i in range(selenium_firefox_nodes_count) %}
+  firefox_{{ i }}:
+    image: "{{ docker_selenium_firefox_image }}:{{ selenium_version }}"
+    networks:
+      - selenium-nodes
+    ports:
+      - "556{{ i }}:556{{ i }}"
+    environment:
+      HUB_PORT_4444_TCP_ADDR: {{ selenium_hub_host }}
+      HUB_PORT_4444_TCP_PORT: {{ selenium_hub_port }}
+      SE_OPTS: "-host {{ ansible_host }} -port 556{{ i }}"
+
+{% endfor %}

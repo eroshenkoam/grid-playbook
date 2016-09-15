@@ -1,0 +1,52 @@
+---
+- stat: path={{ workspace }}/docker-compose.yml
+  register: docker_compose_file
+
+- name: stop compose
+  docker_service:
+    project_src: "{{ workspace }}"
+    state: absent
+  when: docker_compose_file.stat.exists == True
+  ignore_errors: True
+
+- name: remove compose file
+  file:
+    path: "{{ workspace }}"
+    state: absent
+  when: docker_compose_file.stat.exists == True
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+
+- name: create group
+  group:
+    name: "{{ group_name }}"
+    state: present
+
+- name: create user
+  user:
+    name: "{{ user_name }}"
+    group: "{{ group_name }}"
+    state: present
+
+- name: create workspace
+  file:
+    path: "{{ item }}"
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+    state: directory
+  with_items:
+    - "{{ workspace }}"
+
+- name: create compose file
+  template:
+    src: "{{ docker_compose_template }}"
+    dest: "{{ workspace }}/docker-compose.yml"
+    owner: "{{ user_name }}"
+    group: "{{ group_name }}"
+
+- name: start compose
+  docker_service:
+    project_src: "{{ workspace }}"

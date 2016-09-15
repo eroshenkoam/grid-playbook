@@ -1,0 +1,6 @@
+workspace: '/opt/docker/selenium-nodes'
+
+selenium_chrome_nodes_count: 8
+selenium_firefox_nodes_count: 0
+
+selenium_hub_port: '4444'
